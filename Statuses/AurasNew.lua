@@ -1329,7 +1329,7 @@ end
 
 function PlexusStatusAuras:OnStatusDisable(_status)
     if self:EnabledStatusCount() == 0 then
-        self:UnRegisterMessage("UpdateFrameUnits")
+        self:UnregisterMessage("UpdateFrameUnits")
         self:UnregisterEvent("SPELLS_CHANGED")
         self:UnregisterEvent("LOADING_SCREEN_DISABLED")
     end
