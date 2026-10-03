@@ -8,12 +8,21 @@
 ------------------------------------------------------------------------
     Health.lua
     Plexus status module for unit health.
+
+    This file holds the parts shared by every client. What can be done
+    with the health values is up to one of the mechanism files, picked
+    in the .toc:
+      HealthFromReadableValues.lua - values can be compared and computed
+      HealthFromSecretValues.lua   - values are secret to addons
+    A mechanism file implements:
+      PlexusStatusHealth:RegisterMechanismStatuses() - called from PostInitialize
+      PlexusStatusHealth:UpdateLowHealth(guid, isDead, cur, max)
+      PlexusStatusHealth:DescribeHealth(unitid, cur, max)
+        returns healthText, deficitText, isFullHealth, showDeficit
 ----------------------------------------------------------------------]]
 
 local _, Plexus = ...
 local L = Plexus.L
-
-local format = format
 
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
 local UnitGUID = UnitGUID
@@ -46,14 +55,6 @@ PlexusStatusHealth.defaultDB = {
         threshold = 80,
         range = false,
         useClassColors = true,
-    },
-    alert_lowHealth = {
-        text = L["Low HP"],
-        enable = true,
-        color = { r = 1, g = 1, b = 1, a = 1 },
-        priority = 30,
-        threshold = 80,
-        range = false,
     },
     alert_death = {
         text = L["DEAD"],
@@ -187,27 +188,10 @@ local healthDeficitOptions = {
     },
 }
 
-local low_healthOptions = {
-    threshold = {
-        name = L["Low HP threshold"],
-        desc = L["Set the HP % for the low HP warning."],
-        type = "range", min = 0, max = 100, step = 1, width = "double",
-        get = function()
-            return PlexusStatusHealth.db.profile.alert_lowHealth.threshold
-        end,
-        set = function(_, v)
-            PlexusStatusHealth.db.profile.alert_lowHealth.threshold = v
-            PlexusStatusHealth:UpdateAllUnits()
-        end,
-    },
-}
-
 function PlexusStatusHealth:PostInitialize()
     self:RegisterStatus("unit_health", L["Unit health"], healthOptions)
     self:RegisterStatus("unit_healthDeficit", L["Health deficit"], healthDeficitOptions)
-    if not Plexus:IsRetailWow() then
-        self:RegisterStatus("alert_lowHealth", L["Low HP warning"], low_healthOptions)
-    end
+    self:RegisterMechanismStatuses()
     self:RegisterStatus("alert_death", L["Death warning"], nil, true)
     self:RegisterStatus("alert_feignDeath", L["Feign Death warning"], nil, true)
     self:RegisterStatus("alert_offline", L["Offline warning"], nil, true)
@@ -350,59 +334,30 @@ function PlexusStatusHealth:UpdateUnit(event, unitid, ignoreRange)
     local healthPriority = healthSettings.priority
     local deficitPriority = deficitSettings.priority
 
-    if UnitIsDeadOrGhost(unitid) then
+    local isDead = UnitIsDeadOrGhost(unitid)
+    if isDead then
         self:StatusDeath(guid, true)
         self:StatusFeignDeath(guid, false)
-        self:StatusLowHealth(guid, false)
         if healthSettings.deadAsFullHealth then
             cur = max
         end
     else
         self:StatusDeath(guid, false)
         self:StatusFeignDeath(guid, UnitIsFeignDeath(unitid))
-        if not Plexus:IsRetailWow() then
-            self:StatusLowHealth(guid, (cur / max * 100) <= self.db.profile.alert_lowHealth.threshold)
-        end
     end
+    self:UpdateLowHealth(guid, isDead, cur, max)
 
     if not Plexus.IsSpecialUnit[unitid] then
         self:StatusOffline(guid, not UnitIsConnected(unitid), unitid)
     end
 
-    local healthText
-    local deficitText
-
-    if not Plexus:IsRetailWow() and cur < max then
-        if cur > 999 then
-            healthText = format("%.1fk", cur / 1000)
-        else
-            healthText = format("%d", cur)
-        end
-
-        local deficit = max - cur
-        if deficit > 999 then
-            deficitText = format("-%.1fk", deficit / 1000)
-        else
-            deficitText = format("-%d", deficit)
-        end
-    elseif Plexus:IsRetailWow() then
-        healthText = AbbreviateNumbers(cur)
-        deficitText = AbbreviateNumbers(UnitHealthMissing(unitid))
-    else
+    local healthText, deficitText, isFullHealth, showDeficit = self:DescribeHealth(unitid, cur, max)
+    if isFullHealth then
         healthPriority = 1
         deficitPriority = 1
     end
 
-    if not Plexus:IsRetailWow() and (cur / max * 100) <= deficitSettings.threshold then
-        self.core:SendStatusGained(guid, "unit_healthDeficit",
-            deficitPriority,
-            deficitSettings.range,
-            (deficitSettings.useClassColors and self.core:UnitColor(guid) or deficitSettings.color),
-            deficitText,
-            cur,
-            max,
-            deficitSettings.icon)
-    elseif Plexus:IsRetailWow() then
+    if showDeficit then
         self.core:SendStatusGained(guid, "unit_healthDeficit",
             deficitPriority,
             deficitSettings.range,
@@ -438,30 +393,6 @@ end
 function PlexusStatusHealth:FrequentHealth()
     if self.db.profile.unit_health.enableupdateFrequency then
         self:UpdateAllUnits()
-    end
-end
-
-function PlexusStatusHealth:IsLowHealth(cur, max)
-    return (cur / max * 100) <= self.db.profile.alert_lowHealth.threshold
-end
-
-function PlexusStatusHealth:StatusLowHealth(guid, gained)
-    local settings = self.db.profile.alert_lowHealth
-
-    -- return if this option isn't enabled
-    if not settings.enable then return end
-
-    if gained then
-        self.core:SendStatusGained(guid, "alert_lowHealth",
-            settings.priority,
-            settings.range,
-            settings.color,
-            settings.text,
-            nil,
-            nil,
-            settings.icon)
-    else
-        self.core:SendStatusLost(guid, "alert_lowHealth")
     end
 end
 
