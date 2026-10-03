@@ -535,12 +535,6 @@ local PlexusRoster = Plexus:GetModule("PlexusRoster") --luacheck: ignore 211
 local GetSpellInfo = C_Spell and C_Spell.GetSpellInfo and C_Spell.GetSpellInfo or GetSpellInfo
 local UnitBuff = UnitBuff
 local UnitGUID = UnitGUID
-local GetAuraDataByAuraInstanceID
-local ForEachAura
-if Plexus:IsRetailWow() then
-    GetAuraDataByAuraInstanceID = C_UnitAuras.GetAuraDataByAuraInstanceID
-    ForEachAura = AuraUtil.ForEachAura
-end
 
 local settings
 local spellnames = {} --luacheck: ignore 241
