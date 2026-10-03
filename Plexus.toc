@@ -105,8 +105,8 @@ Statuses\GroupBuffs.lua [AllowLoadGameType classic, camelot]
 Statuses\GroupNumber.lua
 Statuses\HealAbsorbs.lua [AllowLoadGameType standard]
 Statuses\Heals.lua
-Statuses\HealsFromCalculator.lua [AllowLoadGameType standard]
-Statuses\HealsFromIncomingHeals.lua [AllowLoadGameType classic, camelot]
+Statuses\HealsFromCalculator.lua [AllowLoadGameType standard, camelot]
+Statuses\HealsFromIncomingHeals.lua [AllowLoadGameType classic]
 Statuses\Health.lua
 Statuses\HostileUnit.lua
 Statuses\Mana.lua
