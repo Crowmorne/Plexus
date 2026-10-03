@@ -137,6 +137,12 @@ Statuses\GroupNumber.lua
 Statuses\HealAbsorbs.lua
 #@end-retail@
 Statuses\Heals.lua
+#@retail@
+Statuses\HealsFromCalculator.lua
+#@end-retail@
+#@non-retail@
+Statuses\HealsFromIncomingHeals.lua
+#@end-non-retail@
 Statuses\HostileUnit.lua
 Statuses\Mana.lua
 Statuses\Mouseover.lua
