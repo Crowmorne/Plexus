@@ -47,6 +47,13 @@ function PlexusStatusHealth:RegisterMechanismStatuses()
     self:RegisterStatus("alert_lowHealth", L["Low HP warning"], low_healthOptions)
 end
 
+function PlexusStatusHealth:RegisterMechanismEvents()
+    if Plexus:IsClassicWow() or Plexus:IsCataWow() or Plexus:IsMistWow() then
+        self:RegisterEvent("UNIT_HEALTH", "UpdateUnit")
+    end
+    self:RegisterEvent("UNIT_HEALTH_FREQUENT", "UpdateUnit")
+end
+
 function PlexusStatusHealth:UpdateLowHealth(guid, isDead, cur, max)
     if isDead then
         self:StatusLowHealth(guid, false)

@@ -24,6 +24,10 @@ end
 function PlexusStatusHealth:UpdateLowHealth(guid, isDead, cur, max) --luacheck: ignore 212
 end
 
+function PlexusStatusHealth:RegisterMechanismEvents()
+    self:RegisterEvent("UNIT_HEALTH", "UpdateUnit")
+end
+
 function PlexusStatusHealth:DescribeHealth(unitid, cur, max) --luacheck: ignore 212
     return AbbreviateNumbers(cur), AbbreviateNumbers(UnitHealthMissing(unitid)), false, true
 end

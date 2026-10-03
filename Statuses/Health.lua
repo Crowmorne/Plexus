@@ -16,6 +16,7 @@
       HealthFromSecretValues.lua   - values are secret to addons
     A mechanism file implements:
       PlexusStatusHealth:RegisterMechanismStatuses() - called from PostInitialize
+      PlexusStatusHealth:RegisterMechanismEvents()   - the live health events, called from PostEnable
       PlexusStatusHealth:UpdateLowHealth(guid, isDead, cur, max)
       PlexusStatusHealth:DescribeHealth(unitid, cur, max)
         returns healthText, deficitText, isFullHealth, showDeficit
@@ -206,17 +207,12 @@ function PlexusStatusHealth:PostEnable()
 
     --self:RegisterEvent("UNIT_AURA", "UpdateUnit")
     self:RegisterEvent("UNIT_CONNECTION", "UpdateUnit")
-    if Plexus:IsRetailWow() or Plexus:IsClassicWow() or Plexus:IsCataWow() or Plexus:IsMistWow() then
-        self:RegisterEvent("UNIT_HEALTH", "UpdateUnit")
-    end
+    self:RegisterMechanismEvents()
     if Plexus:IsRetailWow() then
         self:RegisterEvent("ENCOUNTER_START", "CheckEncounter")
         self:RegisterEvent("ENCOUNTER_END", "CheckEncounter")
     end
     --self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", "CLEU")
-    if Plexus:IsClassicWow() or Plexus:IsTBCWow() or Plexus:IsWrathWow() or Plexus:IsCataWow() or Plexus:IsMistWow() then
-        self:RegisterEvent("UNIT_HEALTH_FREQUENT", "UpdateUnit")
-    end
     self:RegisterEvent("UNIT_MAXHEALTH", "UpdateUnit")
     self:RegisterEvent("UNIT_NAME_UPDATE", "UpdateUnit")
 
