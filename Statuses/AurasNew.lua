@@ -264,11 +264,15 @@ function PlexusStatusAuras:CopyDefaults(settings, defaults)
 end
 
 
-if Plexus:IsRetailWow() then
 PlexusStatusAuras.defaultDB = {
     advancedOptions = false,
     font_size = 8,
     font_color = { r = 1, g = 1, b = 0, a = 1 },
+}
+
+-- This module loads on retail and Forever (see Plexus.toc), but these presets are retail spells.
+if Plexus:IsRetailWow() then
+local retailPresets = {
 --[[
     ["boss_aura"] = {
         desc = L["Boss Aura"],
@@ -1192,6 +1196,9 @@ PlexusStatusAuras.defaultDB = {
         id = spell_ids["Earthliving Weapon"],
     },
 }
+for status, settings in pairs(retailPresets) do
+    PlexusStatusAuras.defaultDB[status] = settings
+end
 end
 
 local default_auras = {}
@@ -1209,68 +1216,66 @@ PlexusStatusAuras.extraOptions = {}
 function PlexusStatusAuras:PostInitialize()
     self:RegisterStatuses()
 
-    if Plexus:IsRetailWow() then
-        self.options.args["add_buff"] = {
-            name = L["Add Buff"],
-            desc = L["Create a new buff status."],
-            order = 11,
-            width = "double",
-            type = "input",
-            usage = L["<buff name>"],
-            get = false,
-            set = function(_, v)
-                self:AddAura(v, true)
-            end,
-        }
-        --self.options.args["add_debuff"] = {
-        --    name = L["Add Debuff"],
-        --    desc = L["Create a new debuff status."],
-        --    order = 31,
-        --    width = "double",
-        --    type = "input",
-        --    usage = L["<debuff name>"],
-        --    get = false,
-        --    set = function(_, v)
-        --        self:AddAura(v, false)
-        --    end,
-        --}
-        self.options.args["delete_aura"] = {
-            name = L["Remove Aura"],
-            desc = L["Remove an existing buff or debuff status."],
-            order = -2,
-            type = "group",
-            dialogInline = true,
-            args = {},
-        }
-        self.options.args["font_size"] = {
-            name = L["Font Size"],
-            desc = L["Adjust the font size for aura text."],
-            order = -2,
-            type = "range",
-            min = 0,
-            max = 100,
-            step = 1,
-            get = function()
-                return self.db.profile.font_size
-            end,
-            set = function(_, v)
-                self.db.profile.font_size = v
-            end,
-        }
-        self.options.args["font_color"] = {
-            type = "color",
-            name = "Font Color",
-            desc = "Choose the color for the font.",
-            hasAlpha = true,
-            get = function(_info)
-                local c = self.db.profile.font_color
-                return c.r, c.g, c.b, c.a
-            end,
-            set = function(_info, r, g, b, a)
-                self.db.profile.font_color = { r = r, g = g, b = b, a = a }
-            end,
-        }
-    end
+    self.options.args["add_buff"] = {
+        name = L["Add Buff"],
+        desc = L["Create a new buff status."],
+        order = 11,
+        width = "double",
+        type = "input",
+        usage = L["<buff name>"],
+        get = false,
+        set = function(_, v)
+            self:AddAura(v, true)
+        end,
+    }
+    --self.options.args["add_debuff"] = {
+    --    name = L["Add Debuff"],
+    --    desc = L["Create a new debuff status."],
+    --    order = 31,
+    --    width = "double",
+    --    type = "input",
+    --    usage = L["<debuff name>"],
+    --    get = false,
+    --    set = function(_, v)
+    --        self:AddAura(v, false)
+    --    end,
+    --}
+    self.options.args["delete_aura"] = {
+        name = L["Remove Aura"],
+        desc = L["Remove an existing buff or debuff status."],
+        order = -2,
+        type = "group",
+        dialogInline = true,
+        args = {},
+    }
+    self.options.args["font_size"] = {
+        name = L["Font Size"],
+        desc = L["Adjust the font size for aura text."],
+        order = -2,
+        type = "range",
+        min = 0,
+        max = 100,
+        step = 1,
+        get = function()
+            return self.db.profile.font_size
+        end,
+        set = function(_, v)
+            self.db.profile.font_size = v
+        end,
+    }
+    self.options.args["font_color"] = {
+        type = "color",
+        name = "Font Color",
+        desc = "Choose the color for the font.",
+        hasAlpha = true,
+        get = function(_info)
+            local c = self.db.profile.font_color
+            return c.r, c.g, c.b, c.a
+        end,
+        set = function(_info, r, g, b, a)
+            self.db.profile.font_color = { r = r, g = g, b = b, a = a }
+        end,
+    }
     self.options.args["advancedOptions"] = {
         name = L["Show advanced options"],
         desc = L["Show advanced options for buff and debuff statuses.\n\nBeginning users may wish to leave this disabled until you are more familiar with Plexus, to avoid being overwhelmed by complicated options menus."],
@@ -1727,17 +1732,15 @@ function PlexusStatusAuras:CreateRemoveOptions()
     for status, settings in pairs(self.db.profile) do
         if type(settings) == "table" and settings.text and not default_auras[status] then
             local debuffName = settings.desc or settings.text
-            if Plexus:IsRetailWow() then
-                self.options.args.delete_aura.args[status] = {
-                    name = debuffName,
-                    desc = format(L["Remove %s from the menu"], debuffName),
-                    width = "double",
-                    type = "execute",
-                    func = function() return
-                        self:DeleteAura(status)
-                    end,
-                }
-            end
+            self.options.args.delete_aura.args[status] = {
+                name = debuffName,
+                desc = format(L["Remove %s from the menu"], debuffName),
+                width = "double",
+                type = "execute",
+                func = function() return
+                    self:DeleteAura(status)
+                end,
+            }
         end
     end
 end

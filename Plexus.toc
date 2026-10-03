@@ -117,9 +117,14 @@ Statuses\AltPower.lua
 #@end-retail@
 
 #@non-retail@
+#@non-version-forever@
 Statuses\Externals.lua
 Statuses\Auras.lua
+#@end-non-version-forever@
 #@end-non-retail@
+#@version-forever@
+Statuses\AurasNew.lua
+#@end-version-forever@
 
 #@retail@
 Statuses\Auras.lua
