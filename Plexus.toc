@@ -108,8 +108,8 @@ Statuses\Heals.lua
 Statuses\HealsFromCalculator.lua [AllowLoadGameType standard, camelot]
 Statuses\HealsFromIncomingHeals.lua [AllowLoadGameType classic]
 Statuses\Health.lua
-Statuses\HealthFromReadableValues.lua [AllowLoadGameType classic, camelot]
-Statuses\HealthFromSecretValues.lua [AllowLoadGameType standard]
+Statuses\HealthFromReadableValues.lua [AllowLoadGameType classic]
+Statuses\HealthFromSecretValues.lua [AllowLoadGameType standard, camelot]
 Statuses\HostileUnit.lua
 Statuses\Mana.lua [AllowLoadGameType classic]
 Statuses\Mouseover.lua
