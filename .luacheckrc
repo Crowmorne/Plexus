@@ -341,6 +341,7 @@ globals = {
     "GetAddOnOptionalDependencies",
     "GetAuctionItemSubClasses",
     "GetBuildInfo",
+    "GetClassInfo",
     "GetContainerItemCooldown",
     "GetContainerItemID",
     "GetContainerItemInfo",
