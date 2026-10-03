@@ -120,8 +120,8 @@ Statuses\Range.lua
 Statuses\ReadyCheck.lua
 Statuses\Resource.lua
 Statuses\Resurrect.lua
-Statuses\ResurrectFromCasts.lua [AllowLoadGameType classic, camelot]
-Statuses\ResurrectFromCombatLog.lua [AllowLoadGameType tbc, wrath, cata, mists, camelot]
+Statuses\ResurrectFromCasts.lua [AllowLoadGameType classic]
+Statuses\ResurrectFromCombatLog.lua [AllowLoadGameType tbc, wrath, cata, mists]
 Statuses\Role.lua [AllowLoadGameType standard]
 Statuses\Stagger.lua [AllowLoadGameType mists]
 Statuses\Summon.lua [AllowLoadGameType standard]
