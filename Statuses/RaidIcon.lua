@@ -113,18 +113,18 @@ end
 function PlexusStatusRaidIcon:UpdateAllUnits(event, ...)
     self:Debug("UpdateAllUnits", event, ...)
     local settings = self.db.profile.raid_icon
-    local icon
-    local color
-    local text
 
     for guid, unit in Roster:IterateRoster() do
         local i = GetRaidTargetIndex(unit)
         --self:Debug(unit, i, i and settings.text[i], i and settings.icon[i])
-        if Plexus:IsRetailWow() then
-            icon = "Interface\\TargetingFrame\\UI-RaidTargetingIcons"
-        end
         if i then
-            if not Plexus:IsRetailWow() then
+            local color, text, icon
+            if Plexus:issecretvalue(i) then
+                -- A secret index can't be used as a table key, so the per-marker settings
+                -- can't be looked up. The icon indicator turns the index into the right
+                -- marker from this texture via SetRaidTargetIconTexture.
+                icon = "Interface\\TargetingFrame\\UI-RaidTargetingIcons"
+            else
                 color = settings.color[i]
                 text = settings.text[i]
                 icon = settings.icon[i]
