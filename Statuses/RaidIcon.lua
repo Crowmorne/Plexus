@@ -18,6 +18,10 @@ local GetRaidTargetIndex = GetRaidTargetIndex
 
 local Roster = Plexus:GetModule("PlexusRoster")
 
+-- Indicators replace a missing color with opaque white, which icons draw as their
+-- background; "ignore" keeps background and border transparent, like the marker colors do.
+local NO_BACKGROUND = { r = 1, g = 1, b = 1, a = 1, ignore = true }
+
 local PlexusStatusRaidIcon = Plexus:NewStatusModule("PlexusStatusRaidIcon")
 PlexusStatusRaidIcon.menuName = L["Raid Icon"]
 PlexusStatusRaidIcon.options = false
@@ -124,6 +128,7 @@ function PlexusStatusRaidIcon:UpdateAllUnits(event, ...)
                 -- can't be looked up. The icon indicator turns the index into the right
                 -- marker from this texture via SetRaidTargetIconTexture.
                 icon = "Interface\\TargetingFrame\\UI-RaidTargetingIcons"
+                color = NO_BACKGROUND
             else
                 color = settings.color[i]
                 text = settings.text[i]
