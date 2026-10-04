@@ -16,7 +16,15 @@ local _, Plexus = ...
 
 local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 
+local PlexusFrame = Plexus:GetModule("PlexusFrame")
 local PlexusStatusHeals = Plexus:GetModule("PlexusStatus"):GetModule("PlexusStatusHeals")
+
+-- This mechanism sends the incoming amount alone, not health + incoming, so by default
+-- show it on the Incoming Healing Bar, which starts at the end of the health fill,
+-- instead of the Healing Bar, which expects health + incoming.
+PlexusFrame.defaultDB.statusmap.healingBar.alert_heals = false
+PlexusFrame.defaultDB.statusmap.ei_bar_barfour = PlexusFrame.defaultDB.statusmap.ei_bar_barfour or {}
+PlexusFrame.defaultDB.statusmap.ei_bar_barfour.alert_heals = true
 
 local calculator
 

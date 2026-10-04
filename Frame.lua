@@ -406,16 +406,11 @@ PlexusFrame.defaultDB = {
     PrivateAuraOffsetY = 0,
 }
 
+-- Incoming heals are mapped by Statuses\HealsFromCalculator.lua.
 if Plexus:IsRetailWow() then
-    PlexusFrame.defaultDB.statusmap.healingBar = {
-        alert_heals = false,
-        alert_absorbs = false,
-    }
+    PlexusFrame.defaultDB.statusmap.healingBar.alert_absorbs = false
     PlexusFrame.defaultDB.statusmap.ei_bar_bartwo = {
         alert_absorbs = true,
-    }
-    PlexusFrame.defaultDB.statusmap.ei_bar_barfour = {
-        alert_heals = true,
     }
 end
 
